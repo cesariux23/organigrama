@@ -1,0 +1,137 @@
+<link rel="import" href="../bower_components/paper-card/paper-card.html"/>
+<dom-module id="x-nodo">
+    <template>
+        <style>
+            paper-card{
+                font-size: 11px;
+                text-align: center;
+                width: 250px;  
+                margin: 10px;
+                margin-left: 20px;
+                margin-top: 20px;
+            }
+            .card-content{
+                height: 55px;
+            }
+            paper-card.staff.left::before{
+                content: '';
+                position: absolute;right: -37px;
+                border-right: 2px solid #999;
+                width: 50%; height: 149%;
+            }
+            paper-card.staff.left::after{
+                content: '';
+                position: absolute;right: -37px; top:50%;
+                border-top: 2px solid #999;
+                width: 37px; height: 0;
+            }
+            paper-card.staff.right::after{
+                content: '';
+                position: absolute;left: -37px; top:50%;
+                border-top: 2px solid #999;
+                width: 37px; height: 0;
+            }
+            
+            
+            
+            paper-card.tiene-hijos.nivel2::after{
+                content: '';
+                z-index: -1;
+                position: absolute; bottom:-28%; left: 50%;
+                border-left: 2px solid #999;
+                width: 50%; height: 149%;
+            }
+            paper-card.sin-hijos.inter.nivel2::after{
+                content: '';
+                position: absolute; top:-20%; left: 50%;
+                border-left: 2px solid #999;
+                width: 0; height: 20%;
+            }
+            paper-card.tiene-hijos.nivel1::after{
+                content: '';
+                position: absolute; top:100%; left: 50%;
+                border-left: 2px solid #999;
+                width: 0; height: 28%;
+            }
+            
+            paper-card.nivel3.unico::after,paper-card.nivel4.unico::after{
+                content: '';
+                position: absolute; top:-40px; left: 50%;
+                border-left: 2px solid #999;
+                width: 171px; height: 40px;
+            }
+            
+            
+            paper-card.nivel3.inter::before, paper-card.nivel4.inter::before,paper-card.nivel3.ultimo::before, paper-card.nivel4.ultimo::before{
+                content: '';
+                position: absolute; bottom:50%; left: -30px;
+                border-bottom: 2px solid #999;
+                border-left: 2px solid #999;
+                width: 28px; height: 120%;
+            }
+            paper-card.nivel3.index0.primero, paper-card.nivel4.index0.primero{
+                margin-top: 42px;
+            }
+            
+            paper-card.nivel3.index0.primero::before, paper-card.nivel4.index0.primero::before{
+                content: '';
+                z-index: -1;
+                position: absolute; top:-10%; left: -30px;
+                border-top: 2px solid #999;
+                border-bottom: 2px solid #999;
+                border-left: 2px solid #999;
+                width: 54%; height: 60%;
+            }
+            
+            
+            paper-card.nivel2.primero::before{
+                content: '';
+                position: absolute; top:-30px; left: 50%;
+                border-top: 2px solid #999;
+                border-left: 2px solid #999;
+                width: 100%; height: 28px;
+            }
+            paper-card.nivel2.inter::before{
+                content: '';
+                position: absolute; top:-30px; left: -30%;
+                border-top: 2px solid #999;
+                width: 130%; height: 1px;
+            }
+            
+            paper-card.nivel2.ultimo::before{
+                content: '';
+                position: absolute; top:-30px; right: 49%;
+                border-top: 2px solid #999;
+                border-right: 2px solid #999;
+                width: 100%; height: 28px;
+            }
+            
+        </style>
+        <paper-card elevation="4" class$=[[clase]]>
+            <div class="card-content">
+                </h4>
+                <p><b>[[area.adscripcion]]</b></p>
+                [[area.titular.nombre]]
+            </div>
+          <div class="card-actions">
+            <paper-button>
+                <iron-icon icon='account-circle'></iron-icon>
+            </paper-button>
+             <a href="/{{area._id}}">
+                <paper-button>
+                    <iron-icon icon='more-vert'></iron-icon>
+                </paper-button>
+            </a>
+          </div>
+        </paper-card>   
+    </template>
+    <script>
+        Polymer({
+            is: 'x-nodo',
+            properties:{
+                area:Object,
+                clase:String
+            }
+        });
+    </script>
+</dom-module>

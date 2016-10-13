@@ -1,0 +1,23 @@
+{
+  "name": "organigrama",
+  "description": "org ivea",
+  "main": "app.js",
+  "authors": [
+    "César Encarnación"
+  ],
+  "license": "ISC",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "polymer": "^1.7.0",
+    "paper-elements": "PolymerElements/paper-elements#^1.0.7",
+    "iron-icons": "PolymerElements/iron-icons#^1.1.3",
+    "iron-ajax": "PolymerElements/iron-ajax#^1.4.3"
+  }
+}

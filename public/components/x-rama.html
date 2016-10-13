@@ -1,0 +1,157 @@
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html"/>
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../bower_components/paper-spinner/paper-spinner-lite.html">
+
+<link rel="import" href="x-nodo.html"/>
+<dom-module id="x-rama">
+    <template>
+        <style>
+            .flex-center-justified {
+                @apply(--layout-horizontal);
+                @apply(--layout-center-justified);
+              }
+            .flex-horizontal {
+                padding-top: 40px;  
+                @apply(--layout-horizontal);
+                @apply(--layout-center-justified);
+                
+              }
+            
+            .flex-vertical {
+                padding-left: 40px;
+                @apply(--layout-vertical);
+              }
+            .flex-wrap{
+                width: 600px;
+                padding-left: -200px;
+              @apply(--layout-horizontal);
+                @apply(--layout-justified);
+              @apply(--layout-wrap);
+            }
+            
+        </style>
+        <iron-ajax auto url="/adscripcion/[[id]]" handle-as="json" last-response="{{areax}}" on-response="validahijos"></iron-ajax>
+        <div class="flex-center-justified">
+            <div class$="[[claseNivel]]">
+                <x-nodo area=[[areax]] clase=[[claseNivel]]></x-nodo>
+            </div>
+        </div>
+        <template is="dom-if" if="[[cargando]]">
+                <paper-spinner-lite active=[[cargando]] class="centrado"></paper-spinner-lite>
+            </template>
+        <template is="dom-if" if="[[areax.raiz]]">
+                    <div class="flex-center-justified contenedor-staff">
+                        <div class="flex-wrap">
+                            <template is="dom-repeat" id="staf{{item._id}}" as="staff" items="{{areax.subareas}}" filter="esStaff">
+                                    <x-nodo area=[[staff]] clase="{{claseStaff(index)}}"></x-nodo> 
+                            </template>
+                        </div>
+                    </div>
+                </template>
+        <template is="dom-if" if="[[mostrarHijos]]">
+            <div class$="{{alineacion}}">
+                <template is="dom-repeat" id="{{item._id}}" as="sub" items="{{areax.subareas}}" filter="noEsStaff">
+                    <x-rama id=[[sub._id]] alineacion='flex-vertical' nivel=[[nivelx]] index=[[index]] ultimo=[[ultimoNodo]]></x-rama>
+                </template>
+            </div>
+        </template>
+    </template>
+    <script>
+        Polymer({
+            is: 'x-rama',
+            properties:{
+                id:Number,
+                cargando:{
+                    type:Boolean,
+                    value:true
+                },
+                ultimo:Number,
+                nivel:Number,
+                index:Number,
+                nivelMax:{
+                    type:Number,
+                    value:3
+                },
+                alineacion:{
+                    type:String,
+                    value:'flex-horizontal'
+                },
+                clase:{
+                    type:String,
+                    value:'horizontal'
+                },
+                claseNivel:{
+                    type:String,
+                    value:''
+                }
+            },
+            ready:function(){
+                if(this.alineacion=='flex-vertical'){
+                    this.clase='vertical';
+                    if(this.ultimo-1==this.index){
+                        if(this.index==0){
+                            this.claseNivel=this.claseNivel+'unico ';  
+                        }else{
+                            this.claseNivel=this.claseNivel+'ultimo ';
+                        }
+                    }else{
+                        if(this.index==0){
+                            this.claseNivel=this.claseNivel+" primero ";
+                        }
+                        else{
+                            this.claseNivel=this.claseNivel+'inter ';
+                        }
+                        
+                    }
+                }
+                this.claseNivel=this.claseNivel+'nivel'+this.nivel+" "+'index'+this.index;
+                this.nivelx=this.nivel+1;
+                
+                this.claseIndex='index'+this.index;
+                if(this.nivel<this.nivelMax){
+                    this.mostrarHijos=true;
+                }
+
+            }
+            ,
+            esStaff:function(area){
+                console.log(area.staff);
+                if(area.staff){
+                    this.ultimoNodo=this.ultimoNodo-1;
+                }
+                return area.staff;
+            },
+            noEsStaff:function(area){
+                return !this.esStaff(area);
+            },
+            claseStaff:function(i){
+                if(i % 2==1)
+                    return 'staff right';
+                else
+                    return 'staff left';
+            },
+            esUltimo:function(){
+                return 'no';
+            },
+            validahijos:function(data){
+                this.cargando=false;
+                //valida que el nodo tenga hijos
+                var subs=data.detail.response.subareas;
+                console.log(this.maxHijo>0);
+                if(subs.length>0){
+                    if(this.nivel<this.nivelMax){
+                        this.claseNivel=this.claseNivel+" tiene-hijos";
+                    }
+                    this.ultimoNodo=subs.length;
+                    if(this.ultimoNodo==1){
+                        this.alineacion='flex-horizontal';
+                    }
+                }
+                else{
+                        this.claseNivel=this.claseNivel+" sin-hijos";
+                    }
+            }
+        });
+    </script>
+</dom-module>

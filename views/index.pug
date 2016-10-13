@@ -1,0 +1,22 @@
+html
+  head
+    title. 
+        IVEA :: Organigrama
+    // 1. Load webcomponents-lite.min.js for polyfill support.
+    script(src='/bower_components/webcomponentsjs/webcomponents-lite.min.js')
+    // 2. Use an HTML Import to bring in some elements.
+    link(rel='import', href='/components/main.html')
+    link(rel='import', href='/bower_components/paper-styles/classes/global.html')
+    link(rel='import', href='/bower_components/iron-icons/iron-icons.html')
+    link(rel='import', href='/bower_components/paper-button/paper-button.html')
+    link(rel='import', href='/bower_components/iron-flex-layout/iron-flex-layout-classes.html')
+    style.
+        body{
+            background-color:#ddd;
+            margin:0;
+        }
+        a{
+            line-height: 12px;
+        }
+  body.fullableed.vertical.layout
+    main-container(raiz=raiz)

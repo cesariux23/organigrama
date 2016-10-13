@@ -1,0 +1,54 @@
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html"/>
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="x-nodo.html"/>
+<link rel="import" href="tree-style.html"/>
+
+<dom-module id="x-rama-xx">
+    <template>
+        <style include="tree-style">
+/*
+            .flex-center-justified {
+                @apply(--layout-horizontal);
+                @apply(--layout-center-justified);
+              }
+            .flex-horizontal {
+                @apply(--layout-horizontal);
+                @apply(--layout-center-justified);
+              }
+            .flex-vertical {
+                margin-left: 40px;
+                @apply(--layout-vertical);
+                @apply(--layout-center-justified);
+                    
+              }
+            
+*/
+        
+        
+            
+        </style>
+        <iron-ajax auto url="/adscripcion/{{id}}" handle-as="json" last-response="{{area}}"></iron-ajax>
+        <div class="flex-center-justified">
+            <x-nodo area=[[area]]></x-nodo>
+        </div>
+        <div class="flex-horizontal">
+            <template is="dom-repeat" id="subarea" items="{{area.subareas}}">
+                <x-nodo area=[[item]]></x-nodo>
+            </a>
+            </template>
+        </div>        
+    </template>
+    <script>
+        Polymer({
+            /* this is the element's prototype */
+            is: 'x-rama-xx',
+            properties:{
+                id:Number
+            },
+            ready:function(){
+                console.log(this.area);
+            }
+        });
+    </script>
+</dom-module>
