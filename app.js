@@ -9,7 +9,7 @@ app.use(express.static('public'));
 app.get('/', function (req, res) {
     adscripciones.findOne({raiz:true},function(err, doc){
         console.log(doc);
-        res.render('index', { raiz:doc}); 
+        res.render('index', { raiz:doc});
     });
 });
 
@@ -21,13 +21,13 @@ app.get('/:id', function (req, res) {
          }
          else{
             console.log(doc);
-            res.render('index', { raiz:doc}); 
+            res.render('index', { raiz:doc});
          }
     });
 });
 
 app.get('/adscripcion/:id', function (req, res) {
-    
+
     var raiz = adscripciones.aggregate(
         {
             $lookup: {
@@ -37,7 +37,6 @@ app.get('/adscripcion/:id', function (req, res) {
                 as: 'subareas'
             }
         },
-        {orderby:{'staff':1, '_id':1}}
         {$match:{'_id':req.params.id}}
     ,function(err, doc){
         res.json(doc[0]);
