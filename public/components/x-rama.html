@@ -34,7 +34,7 @@
         <iron-ajax auto url="/adscripcion/[[id]]" handle-as="json" last-response="{{areax}}" on-response="validahijos"></iron-ajax>
         <div class="flex-center-justified">
             <div class$="[[claseNivel]]">
-                <x-nodo area=[[areax]] clase=[[claseNivel]]></x-nodo>
+                <x-nodo area=[[areax]] index=[[index]] nivel=[[nivel]] ultimo-nodo=[[ultimo]] clases={{claseNivel}}></x-nodo>
             </div>
         </div>
         <template is="dom-if" if="[[cargando]]">
@@ -83,7 +83,8 @@
                 },
                 claseNivel:{
                     type:String,
-                    value:''
+                    value:'sin-hijos',
+                    notify:true,
                 }
             },
             ready:function(){
@@ -91,16 +92,16 @@
                     this.clase='vertical';
                     if(this.ultimo-1==this.index){
                         if(this.index==0){
-                            this.claseNivel=this.claseNivel+'unico ';  
+                            this.claseNivel=this.claseNivel+"unico ";  
                         }else{
-                            this.claseNivel=this.claseNivel+'ultimo ';
+                            this.claseNivel=this.claseNivel+"ultimo ";
                         }
                     }else{
                         if(this.index==0){
                             this.claseNivel=this.claseNivel+" primero ";
                         }
                         else{
-                            this.claseNivel=this.claseNivel+'inter ';
+                            this.claseNivel=this.claseNivel+"inter ";
                         }
                         
                     }
@@ -141,7 +142,7 @@
                 console.log(this.maxHijo>0);
                 if(subs.length>0){
                     if(this.nivel<this.nivelMax){
-                        this.claseNivel=this.claseNivel+" tiene-hijos";
+                        this.claseNivel="tiene-hijos";
                     }
                     this.ultimoNodo=subs.length;
                     if(this.ultimoNodo==1){
@@ -149,8 +150,10 @@
                     }
                 }
                 else{
-                        this.claseNivel=this.claseNivel+" sin-hijos";
+                        this.claseNivel="sin-hijos";
                     }
+                this.claseNivel=this.claseNivel+' nivel'+this.nivel;
+                console.log(this.claseNivel);
             }
         });
     </script>

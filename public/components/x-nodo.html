@@ -10,6 +10,7 @@
                 margin-left: 20px;
                 margin-top: 20px;
             }
+            
             .card-content{
                 height: 55px;
             }
@@ -31,29 +32,6 @@
                 border-top: 2px solid #999;
                 width: 37px; height: 0;
             }
-            
-            
-            
-            paper-card.tiene-hijos.nivel2::after{
-                content: '';
-                z-index: -1;
-                position: absolute; bottom:-28%; left: 50%;
-                border-left: 2px solid #999;
-                width: 50%; height: 149%;
-            }
-            paper-card.sin-hijos.inter.nivel2::after{
-                content: '';
-                position: absolute; top:-20%; left: 50%;
-                border-left: 2px solid #999;
-                width: 0; height: 20%;
-            }
-            paper-card.tiene-hijos.nivel1::after{
-                content: '';
-                position: absolute; top:100%; left: 50%;
-                border-left: 2px solid #999;
-                width: 0; height: 28%;
-            }
-            
             paper-card.nivel3.unico::after,paper-card.nivel4.unico::after{
                 content: '';
                 position: absolute; top:-40px; left: 50%;
@@ -69,11 +47,11 @@
                 border-left: 2px solid #999;
                 width: 28px; height: 120%;
             }
-            paper-card.nivel3.index0.primero, paper-card.nivel4.index0.primero{
+            paper-card.nivel3.primero, paper-card.nivel4.primero{
                 margin-top: 42px;
             }
             
-            paper-card.nivel3.index0.primero::before, paper-card.nivel4.index0.primero::before{
+            paper-card.nivel3.primero::before, paper-card.nivel4.primero::before{
                 content: '';
                 z-index: -1;
                 position: absolute; top:-10%; left: -30px;
@@ -81,6 +59,14 @@
                 border-bottom: 2px solid #999;
                 border-left: 2px solid #999;
                 width: 54%; height: 60%;
+            }
+            
+            paper-card.nivel3.primero::after, paper-card.nivel4.primero::after{
+                content: '';
+                z-index: -1;
+                position: absolute; top:-51px; left:43%;
+                border-left: 2px solid #999;
+                width: 54%; height: 39px;
             }
             
             
@@ -97,6 +83,12 @@
                 border-top: 2px solid #999;
                 width: 130%; height: 1px;
             }
+            paper-card.inter.nivel2::after{
+                content: '';
+                position: absolute; top:-30px; left: 50%;
+                border-left: 2px solid #999;
+                width: 0; height: 30px;
+            }
             
             paper-card.nivel2.ultimo::before{
                 content: '';
@@ -104,6 +96,13 @@
                 border-top: 2px solid #999;
                 border-right: 2px solid #999;
                 width: 100%; height: 28px;
+            }
+            
+            paper-card.nivel1.unico::before{
+                content: '';
+                position: absolute; bottom:-40px; right: 49%;
+                border-right: 2px solid #999;
+                width: 0; height: 40px;
             }
             
         </style>
@@ -129,9 +128,54 @@
         Polymer({
             is: 'x-nodo',
             properties:{
-                area:Object,
-                clase:String
-            }
+				area:Object,
+				empleado:Object,
+                clases:{
+                    type:String,
+                    value:'sin-hijos'
+                },
+				ultimoNodo:{
+						type:Number,
+						value:1
+				},
+				index:{
+						type:Number,
+						value:0,
+				},
+				nivel:{
+						type:Number,
+						value:3
+				},
+            },
+			hasEmpleado:function(){
+					if(this.empleado == null)
+						return false;
+					else
+						return true;
+			},
+			ready:function(){
+				this.esEmpleado=this.hasEmpleado();
+				this.esArea=!this.esEmpleado;
+				//deternima las clases a utilizar en el nodo
+				var cnivel="nivel"+this.nivel;
+				var cindex="inter";
+				if(this.index == this.ultimoNodo-1){
+					if(this.index==0){
+						cindex="unico";
+					}else{
+						cindex="ultimo";
+					}
+				}
+				else{
+					if(this.index==0)
+						cindex="primero";
+				}
+				this.clase=cnivel+" "+cindex+" "+this.clases;
+                
+			}
+
         });
+    </script>
+
     </script>
 </dom-module>
