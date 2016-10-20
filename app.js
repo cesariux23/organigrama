@@ -37,6 +37,14 @@ app.get('/adscripcion/:id', function (req, res) {
                 as: 'subareas'
             }
         },
+        {
+          $lookup: {
+              from: 'empleados',
+              localField: '_id',
+              foreignField: 'adscripcion',
+              as: 'empleados'
+          }
+        },
         {$match:{'_id':req.params.id}}
     ,function(err, doc){
         res.json(doc[0]);
