@@ -30,31 +30,35 @@
               @apply(--layout-wrap);
             }
             
+            
         </style>
+        
         <iron-ajax auto url="/adscripcion/[[id]]" handle-as="json" last-response="{{areax}}" on-response="validahijos"></iron-ajax>
-        <div class="flex-center-justified">
-            <div class$="[[claseNivel]]">
-                <x-nodo area=[[areax]] index=[[index]] nivel=[[nivel]] ultimo-nodo=[[ultimo]] clases={{claseNivel}}></x-nodo>
-            </div>
-        </div>
         <template is="dom-if" if="[[cargando]]">
-                <paper-spinner-lite active=[[cargando]] class="centrado"></paper-spinner-lite>
-            </template>
-        <template is="dom-if" if="[[areax.raiz]]">
-                    <div class="flex-center-justified contenedor-staff">
-                        <div class="flex-wrap">
-                            <template is="dom-repeat" id="staf{{item._id}}" as="staff" items="{{areax.subareas}}" filter="esStaff">
-                                    <x-nodo area=[[staff]] clase="{{claseStaff(index)}}"></x-nodo> 
-                            </template>
-                        </div>
-                    </div>
-                </template>
-        <template is="dom-if" if="[[mostrarHijos]]">
-            <div class$="{{alineacion}}">
-                <template is="dom-repeat" id="{{item._id}}" as="sub" items="{{areax.subareas}}" filter="noEsStaff">
-                    <x-rama id=[[sub._id]] alineacion='flex-vertical' nivel=[[nivelx]] index=[[index]] ultimo=[[ultimoNodo]]></x-rama>
-                </template>
+                <paper-spinner-lite active=[[cargando]] class="flex-center-justified"></paper-spinner-lite>
+        </template>
+        <template is="dom-if" if="[[listo]]">
+            <div class="flex-center-justified">
+                <div class$="[[claseNivel]]">
+                    <x-nodo area={{areax}} index=[[index]] nivel=[[nivel]] ultimo-nodo={{ultimo}}></x-nodo>
+                </div>
             </div>
+            <template is="dom-if" if="[[areax.raiz]]">
+                <div class="flex-center-justified contenedor-staff">
+                    <div class="flex-wrap">
+                        <template is="dom-repeat" as="staff" items="{{areax.subareas}}" filter="esStaff">
+                            <x-nodo area={{staff}} index=[[index]] staff=true></x-nodo> 
+                        </template>
+                    </div>
+                </div>
+            </template>
+            <template is="dom-if" if="[[mostrarHijos]]">
+                <div class$="{{alineacion}}">
+                    <template is="dom-repeat" items="{{areax.subareas}}" filter="noEsStaff">
+                        <x-rama id="{{item._id}}" alineacion='flex-vertical' nivel=[[nivelx]] index=[[index]] ultimo={{getUltimo()}}></x-rama>
+                    </template>
+                </div>
+            </template>
         </template>
     </template>
     <script>
@@ -62,11 +66,18 @@
             is: 'x-rama',
             properties:{
                 id:Number,
+                raiz:{
+                    type:Boolean,
+                    value:false
+                },
                 cargando:{
                     type:Boolean,
                     value:true
                 },
-                ultimo:Number,
+                ultimo:{
+                    type:Number,
+                    value:1
+                },
                 nivel:Number,
                 index:Number,
                 nivelMax:{
@@ -88,72 +99,58 @@
                 }
             },
             ready:function(){
-                if(this.alineacion=='flex-vertical'){
-                    this.clase='vertical';
-                    if(this.ultimo-1==this.index){
-                        if(this.index==0){
-                            this.claseNivel=this.claseNivel+"unico ";  
-                        }else{
-                            this.claseNivel=this.claseNivel+"ultimo ";
-                        }
-                    }else{
-                        if(this.index==0){
-                            this.claseNivel=this.claseNivel+" primero ";
-                        }
-                        else{
-                            this.claseNivel=this.claseNivel+"inter ";
-                        }
-                        
-                    }
-                }
-                this.claseNivel=this.claseNivel+'nivel'+this.nivel+" "+'index'+this.index;
                 this.nivelx=this.nivel+1;
-                
-                this.claseIndex='index'+this.index;
                 if(this.nivel<this.nivelMax){
                     this.mostrarHijos=true;
                 }
-
+                console.log(this.ultimo);
             }
             ,
             esStaff:function(area){
-                console.log(area.staff);
                 if(area.staff){
                     this.ultimoNodo=this.ultimoNodo-1;
+                    console.log(this.ultimoNodo)
                 }
                 return area.staff;
             },
             noEsStaff:function(area){
-                return !this.esStaff(area);
-            },
-            claseStaff:function(i){
-                if(i % 2==1)
-                    return 'staff right';
+                if(area.staff)
+                    return false;
                 else
-                    return 'staff left';
-            },
-            esUltimo:function(){
-                return 'no';
+                    return true;
             },
             validahijos:function(data){
+                
+                //se cambian las banderas para construir los nodos
                 this.cargando=false;
-                //valida que el nodo tenga hijos
-                var subs=data.detail.response.subareas;
-                console.log(this.maxHijo>0);
-                if(subs.length>0){
+                this.listo=true;
+                
+                //se recupera las subareas
+                var subs=this.areax.subareas;
+                //valida que tenga subareas
+                if(this.areax.subareas){
+                    this.ultimoNodo=this.areax.subareas.length;
+                }
+                //su es el elemento raiz se actializa el contenedor principal
+                if(this.raiz){
+                    var main=document.querySelector('main-container');
+                    main.area=this.areax.adscripcion;
+                    main.super=this.areax.super;
+                }
+                
+                if(this.ultimoNodo>0){
                     if(this.nivel<this.nivelMax){
                         this.claseNivel="tiene-hijos";
                     }
-                    this.ultimoNodo=subs.length;
                     if(this.ultimoNodo==1){
                         this.alineacion='flex-horizontal';
                     }
                 }
-                else{
-                        this.claseNivel="sin-hijos";
-                    }
                 this.claseNivel=this.claseNivel+' nivel'+this.nivel;
                 console.log(this.claseNivel);
+            },
+            getUltimo:function(){
+                return this.ultimoNodo;
             }
         });
     </script>

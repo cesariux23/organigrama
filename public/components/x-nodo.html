@@ -34,7 +34,13 @@
             }
             paper-card.nivel3.unico::after,paper-card.nivel4.unico::after{
                 content: '';
-                position: absolute; top:-40px; left: 50%;
+                position: absolute; top:-70px; left: 50%;
+                border-left: 2px solid #999;
+                width: 171px; height: 70px;
+            }
+            paper-card.nivel2.unico::before{
+                content: '';
+                position: absolute; top:-40px; left: 126px;
                 border-left: 2px solid #999;
                 width: 171px; height: 40px;
             }
@@ -45,7 +51,7 @@
                 position: absolute; bottom:50%; left: -30px;
                 border-bottom: 2px solid #999;
                 border-left: 2px solid #999;
-                width: 28px; height: 120%;
+                width: 28px; height: 150%;
             }
             paper-card.nivel3.primero, paper-card.nivel4.primero{
                 margin-top: 42px;
@@ -58,15 +64,15 @@
                 border-top: 2px solid #999;
                 border-bottom: 2px solid #999;
                 border-left: 2px solid #999;
-                width: 54%; height: 60%;
+                width: 137px; height: 60%;
             }
             
             paper-card.nivel3.primero::after, paper-card.nivel4.primero::after{
                 content: '';
                 z-index: -1;
-                position: absolute; top:-51px; left:43%;
+                position: absolute; top:-52px; left:43%;
                 border-left: 2px solid #999;
-                width: 54%; height: 39px;
+                width: 0; height: 40px;
             }
             
             
@@ -98,37 +104,52 @@
                 width: 100%; height: 28px;
             }
             
-            paper-card.nivel1.unico::before{
+            paper-card.nivel1.tiene-hijos::before{
                 content: '';
                 position: absolute; bottom:-40px; right: 49%;
                 border-right: 2px solid #999;
                 width: 0; height: 40px;
             }
+            paper-card.nivel1.unico{
+                font-size: 14px;
+                text-align: center;
+            }
+            paper-card.nivel1.unico > div.card-content{
+                height: 100px;
+            }
             
         </style>
         <paper-card elevation="4" class$=[[clase]]>
             <div class="card-content">
-                </h4>
-                <p><b>[[area.adscripcion]]</b></p>
-                [[area.titular.nombre]]
+                <template is="dom-if" if="{{_area(area)}}">
+                    <p><b>[[area.adscripcion]]</b></p>
+              </template>
             </div>
           <div class="card-actions">
-            <paper-button>
-                <iron-icon icon='account-circle'></iron-icon>
-            </paper-button>
-             <a href="/{{area._id}}">
-                <paper-button>
-                    <iron-icon icon='more-vert'></iron-icon>
+              <template is="dom-if" if="{{_empleado(empleado)}}">
+                  <paper-button>
+                    <iron-icon icon='account-circle'></iron-icon>
                 </paper-button>
-            </a>
+              </template>
+              <template is="dom-if" if="{{_area(area)}}">
+                  <a href="/{{area._id}}">
+                    <paper-button>
+                        <iron-icon icon='more-vert'></iron-icon>
+                      </paper-button>
+                  </a>
+              </template>
+                
           </div>
-        </paper-card>   
+        </paper-card>
     </template>
     <script>
         Polymer({
             is: 'x-nodo',
             properties:{
-				area:Object,
+				area:{
+                    type:Object,
+                    notify:true
+                },
 				empleado:Object,
                 clases:{
                     type:String,
@@ -146,34 +167,61 @@
 						type:Number,
 						value:3
 				},
+                staff:{
+                    type:Boolean,
+                    value:false
+                    
+                }
             },
-			hasEmpleado:function(){
-					if(this.empleado == null)
-						return false;
-					else
-						return true;
+            _area:function(area){
+                if(area == null)
+					return false;
+				else
+					return true;
+			},
+			_empleado:function(empleado){
+				if(empleado == null)
+					return false;
+				else
+					return true;
 			},
 			ready:function(){
-				this.esEmpleado=this.hasEmpleado();
-				this.esArea=!this.esEmpleado;
 				//deternima las clases a utilizar en el nodo
 				var cnivel="nivel"+this.nivel;
 				var cindex="inter";
-				if(this.index == this.ultimoNodo-1){
-					if(this.index==0){
-						cindex="unico";
-					}else{
-						cindex="ultimo";
-					}
-				}
-				else{
-					if(this.index==0)
-						cindex="primero";
-				}
-				this.clase=cnivel+" "+cindex+" "+this.clases;
-                
+                //determina las clases para el staff
+                if(this.staff){
+                    if(this.index % 2==0)
+                        this.clase="staff left";
+                    else
+                        this.clase="staff right";
+                }else{
+                    if(this.index == this.ultimoNodo-1){
+                        if(this.index==0){
+                            cindex="unico";
+                        }else{
+                            cindex="ultimo";
+                        }
+                    }
+                    else{
+                        if(this.index==0)
+                            cindex="primero";
+                    }
+                    //si es raiz tiene que tener hijos
+                    if(this.area.raiz){
+                        this.clases="tiene-hijos";
+                    }
+                    //determina si el nodo tiene hijos, 
+                    if(this.area){
+                        var subs=this.area.subareas;
+                        if(subs){
+                            if(subs.length>0)
+                                this.clases="tiene-hijos"
+                        }
+                    }
+                    this.clase=this.ultimoNodo+"_"+this.index+" "+cnivel+" "+cindex+" "+this.clases;
+                }
 			}
-
         });
     </script>
 

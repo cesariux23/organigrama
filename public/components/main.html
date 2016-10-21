@@ -27,15 +27,15 @@
             }
         </style>
         <paper-toolbar>
-            <div class="title">[[raiz.adscripcion]]</div>
+            <div class="title">[[area]]</div>
         </paper-toolbar>
-        <template is="dom-if" if="[[raiz.super]]">
-            <a href="/{{raiz.super}}" class="volver">
+        <template is="dom-if" if="{{super}}">
+            <a href="/{{super}}" class="volver">
             <paper-fab icon="arrow-back" title="Volver" class="orange"></paper-fab>
         </a>
         </template>
         <div class="flex-center">
-            <x-rama id=[[raiz._id]] nivel='1'></x-rama> 
+            <x-rama id=[[raiz]] nivel='1' raiz=true></x-rama> 
         </div>
     </template>
     <script>
@@ -43,7 +43,19 @@
             /* this is the element's prototype */
             is: 'main-container',
             properties:{
-                raiz:Object
+                raiz:Object,
+                super:String,
+                area:{
+                    type:String,
+                    value:'Cargando información ...'
+                }
+            },
+            tieneSuper:function(){
+                if(this.super)
+                    return true;
+                else
+                    return false;
+                console.log(this.super);
             }
         }); 
     </script>

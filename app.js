@@ -8,27 +8,18 @@ app.use(express.static('public'));
 
 app.get('/', function (req, res) {
     adscripciones.findOne({raiz:true},function(err, doc){
-        console.log(doc);
-        res.render('index', { raiz:doc});
+        res.render('index', { raiz:doc._id});
     });
 });
 
 app.get('/:id', function (req, res) {
     var id=req.params.id;
-     adscripciones.findOne({'_id':id},function(err, doc){
-         if(err){
-             console.log(err);
-         }
-         else{
-            console.log(doc);
-            res.render('index', { raiz:doc});
-         }
-    });
+    res.render('index', { raiz:id});
 });
 
 app.get('/adscripcion/:id', function (req, res) {
 
-    var raiz = adscripciones.aggregate(
+    adscripciones.aggregate(
         {
             $lookup: {
                 from: 'adscripciones',
@@ -37,6 +28,7 @@ app.get('/adscripcion/:id', function (req, res) {
                 as: 'subareas'
             }
         },
+        {$sort:{staff:-1}},
         {
           $lookup: {
               from: 'empleados',
@@ -47,7 +39,9 @@ app.get('/adscripcion/:id', function (req, res) {
         },
         {$match:{'_id':req.params.id}}
     ,function(err, doc){
-        res.json(doc[0]);
+        //area primaria
+        var area=doc[0];
+        res.json(area);   
     });
 });
 
