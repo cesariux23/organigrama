@@ -3,68 +3,81 @@
     <template>
         <style>
             paper-card{
-                font-size: 11px;
+                font-size: 9px;
                 text-align: center;
-                width: 250px;  
+                width: 180px;  
                 margin: 10px;
                 margin-left: 20px;
                 margin-top: 20px;
             }
             
-            .card-content{
-                height: 55px;
+            .area .card-content{
+                height: 130px;
+            }
+            
+            .area .card-content a{
+                font-size: 11px;
+                font-weight: bold;
+            }
+            .empleado .card-content{
+                height: 80px;
             }
             paper-card.staff.left::before{
                 content: '';
-                position: absolute;right: -37px;
+                position: absolute;
+                right: -59%;
+                bottom: -52px;
                 border-right: 2px solid #999;
-                width: 50%; height: 149%;
+                width: 50%; height: 130%;
             }
             paper-card.staff.left::after{
                 content: '';
-                position: absolute;right: -37px; top:50%;
+                position: absolute;right: -59%; top:50%;
                 border-top: 2px solid #999;
-                width: 37px; height: 0;
+                width: 59%; height: 0;
             }
             paper-card.staff.right::after{
                 content: '';
-                position: absolute;left: -37px; top:50%;
+                position: absolute;left: -60%; top:50%;
                 border-top: 2px solid #999;
-                width: 37px; height: 0;
+                width: 60%; height: 0;
             }
-            paper-card.nivel3.unico::after,paper-card.nivel4.unico::after{
-                content: '';
-                position: absolute; top:-70px; left: 50%;
-                border-left: 2px solid #999;
-                width: 171px; height: 70px;
+            paper-card.nivel3.unico{
+                margin-top: 42px;
             }
-            paper-card.nivel2.unico::before{
+            paper-card.empleado.nivel3.unico,paper-card.empleado.nivel4.unico{
+                margin-left: -20px;
+            }
+            
+            paper-card.nivel2.unico::before,paper-card.nivel3.unico::before, paper-card.nivel4.unico::before{
                 content: '';
-                position: absolute; top:-40px; left: 126px;
+                z-index: -1;
+                position: absolute; top:-52px; left: 126px;
                 border-left: 2px solid #999;
-                width: 171px; height: 40px;
+                width: 171px; height: 51px;
             }
             
             
             paper-card.nivel3.inter::before, paper-card.nivel4.inter::before,paper-card.nivel3.ultimo::before, paper-card.nivel4.ultimo::before{
                 content: '';
+                z-index: -1;
                 position: absolute; bottom:50%; left: -30px;
                 border-bottom: 2px solid #999;
                 border-left: 2px solid #999;
                 width: 28px; height: 150%;
             }
             paper-card.nivel3.primero, paper-card.nivel4.primero{
-                margin-top: 42px;
+                margin-top: 40px;
             }
             
             paper-card.nivel3.primero::before, paper-card.nivel4.primero::before{
                 content: '';
                 z-index: -1;
-                position: absolute; top:-10%; left: -30px;
+                position: absolute; top:-10px; left: -30px;
                 border-top: 2px solid #999;
                 border-bottom: 2px solid #999;
                 border-left: 2px solid #999;
-                width: 137px; height: 60%;
+                width: 59.5%; height: 60%;
             }
             
             paper-card.nivel3.primero::after, paper-card.nivel4.primero::after{
@@ -72,7 +85,7 @@
                 z-index: -1;
                 position: absolute; top:-52px; left:43%;
                 border-left: 2px solid #999;
-                width: 0; height: 40px;
+                width: 0; height: 42px;
             }
             
             
@@ -85,9 +98,9 @@
             }
             paper-card.nivel2.inter::before{
                 content: '';
-                position: absolute; top:-30px; left: -30%;
+                position: absolute; top:-30px; left: -60%;
                 border-top: 2px solid #999;
-                width: 130%; height: 1px;
+                width: 190%; height: 1px;
             }
             paper-card.inter.nivel2::after{
                 content: '';
@@ -104,13 +117,14 @@
                 width: 100%; height: 28px;
             }
             
+            paper-card.nivel1.tiene-hijos{
+                margin-bottom: 49px;
+            }
             paper-card.nivel1.tiene-hijos::before{
                 content: '';
                 position: absolute; bottom:-40px; right: 49%;
                 border-right: 2px solid #999;
                 width: 0; height: 40px;
-            }
-            paper-card.nivel1.unico{
                 font-size: 14px;
                 text-align: center;
             }
@@ -118,14 +132,58 @@
                 height: 100px;
             }
             
+            .puesto{
+                font-style: italic;
+                color:#9E9E9E;
+            }
+            
+            
+            p.area{
+                left: -15px;
+                top: -16px;
+                position: relative;
+                padding: 10px 10px 0 10px;
+                width: 100%;
+                margin-bottom: 0px;
+            }
+            p.area:hover{
+                color: #FF5722;
+            }
+/*
+            .nivel1 p.area{
+                background: #01579B;
+                color: white;
+            }
+            .nivel2 p.area{
+                background: #039BE5;
+                color: white;
+            }
+            .nivel3 p.area{
+                background: #80CBC4;
+            }
+            
+*/
         </style>
         <paper-card elevation="4" class$=[[clase]]>
             <div class="card-content">
                 <template is="dom-if" if="{{_area(area)}}">
-                    <p><b>[[area.adscripcion]]</b></p>
-              </template>
+                    <a href="/{{area._id}}">
+                        <p class="area">
+                            [[area.adscripcion]]
+                            <paper-tooltip>Ver detalles del área</paper-tooltip>
+                        </p>
+                    </a>
+                </template>
+                <template is="dom-if" if="{{_empleado(empleado)}}">
+                    <div>
+                        <span class="nombre">[[empleado.nombre]] [[empleado.primer_apellido]] [[empleado.segundo_apellido]]</span>
+                        <br/>
+                        <span class="puesto">[[empleado.puesto]]</span>
+                    </div>
+                </template>
             </div>
-          <div class="card-actions">
+<!--
+            <div class="card-actions">
               <template is="dom-if" if="{{_empleado(empleado)}}">
                   <paper-button>
                     <iron-icon icon='account-circle'></iron-icon>
@@ -140,6 +198,7 @@
               </template>
                 
           </div>
+-->
         </paper-card>
     </template>
     <script>
@@ -189,12 +248,17 @@
 				//deternima las clases a utilizar en el nodo
 				var cnivel="nivel"+this.nivel;
 				var cindex="inter";
+                var cnodo="empleado";
+                
+                console.log(this.ultimoNodo)
                 //determina las clases para el staff
                 if(this.staff){
                     if(this.index % 2==0)
                         this.clase="staff left";
                     else
                         this.clase="staff right";
+                    if(this.area)
+                        this.clase=this.clase+" area";
                 }else{
                     if(this.index == this.ultimoNodo-1){
                         if(this.index==0){
@@ -207,19 +271,24 @@
                         if(this.index==0)
                             cindex="primero";
                     }
-                    //si es raiz tiene que tener hijos
-                    if(this.area.raiz){
-                        this.clases="tiene-hijos";
-                    }
                     //determina si el nodo tiene hijos, 
                     if(this.area){
                         var subs=this.area.subareas;
+                        cnodo="area";
                         if(subs){
-                            if(subs.length>0)
-                                this.clases="tiene-hijos"
+                            //si es raiz tiene que tener hijos
+                            if(this.area.raiz){
+                                this.clases="tiene-hijos";
+                            }
+                            else{
+                                if(subs.length>0)
+                                    this.clases="tiene-hijos"
+                                if(this.area.empleados.length>0)
+                                    this.clases="tiene-hijos"
+                            }
                         }
                     }
-                    this.clase=this.ultimoNodo+"_"+this.index+" "+cnivel+" "+cindex+" "+this.clases;
+                    this.clase=cnodo+" "+cnivel+" "+cindex+" "+this.clases;
                 }
 			}
         });

@@ -12,7 +12,6 @@
                 @apply(--layout-center-justified);
               }
             .flex-horizontal {
-                padding-top: 40px;  
                 @apply(--layout-horizontal);
                 @apply(--layout-center-justified);
                 
@@ -24,12 +23,14 @@
               }
             .flex-wrap{
                 width: 600px;
-                padding-left: -200px;
+                margin-top: -40px;
+                padding-left: -50%;
+                margin-bottom: 52px;
               @apply(--layout-horizontal);
                 @apply(--layout-justified);
               @apply(--layout-wrap);
             }
-            
+        
             
         </style>
         
@@ -40,10 +41,10 @@
         <template is="dom-if" if="[[listo]]">
             <div class="flex-center-justified">
                 <div class$="[[claseNivel]]">
-                    <x-nodo area={{areax}} index=[[index]] nivel=[[nivel]] ultimo-nodo={{ultimo}}></x-nodo>
+                    <x-nodo area={{areax}} index=[[index]] nivel=[[nivel]] ultimo-nodo={{ultimo}} empleado=[[titular]]></x-nodo>
                 </div>
             </div>
-            <template is="dom-if" if="[[areax.raiz]]">
+            <template is="dom-if" if="{{_esRaiz(areax)}}">
                 <div class="flex-center-justified contenedor-staff">
                     <div class="flex-wrap">
                         <template is="dom-repeat" as="staff" items="{{areax.subareas}}" filter="esStaff">
@@ -53,11 +54,20 @@
                 </div>
             </template>
             <template is="dom-if" if="[[mostrarHijos]]">
-                <div class$="{{alineacion}}">
-                    <template is="dom-repeat" items="{{areax.subareas}}" filter="noEsStaff">
-                        <x-rama id="{{item._id}}" alineacion='flex-vertical' nivel=[[nivelx]] index=[[index]] ultimo={{getUltimo()}}></x-rama>
-                    </template>
-                </div>
+                <template is="dom-if" if="{{_tieneSubareas(areax)}}">
+                    <div class$="{{alineacion}}">
+                        <template is="dom-repeat" items="{{areax.subareas}}" filter="noEsStaff">
+                            <x-rama id="{{item._id}}" alineacion='flex-vertical' nivel=[[nivelx]] index=[[index]] ultimo={{getUltimo()}}></x-rama>
+                        </template>
+                    </div>
+                </template>
+                <template is="dom-if" if="{{_tieneEmpleados(areax)}}">
+                    <div class$="{{alineacionEmp}}">
+                        <template is="dom-repeat" items="{{areax.empleados}}">
+                                <x-nodo index=[[index]] empleado=[[item]] nivel=[[nivelEmp]] ultimo-nodo={{empleadosCount}}></x-nodo>
+                        </template>
+                    </div>
+                </template>
             </template>
         </template>
     </template>
@@ -103,13 +113,11 @@
                 if(this.nivel<this.nivelMax){
                     this.mostrarHijos=true;
                 }
-                console.log(this.ultimo);
             }
             ,
             esStaff:function(area){
                 if(area.staff){
                     this.ultimoNodo=this.ultimoNodo-1;
-                    console.log(this.ultimoNodo)
                 }
                 return area.staff;
             },
@@ -119,11 +127,17 @@
                 else
                     return true;
             },
+            esTitular:function(emp){
+                if(emp.titular)
+                    return emp.titular;
+            },
             validahijos:function(data){
                 
                 //se cambian las banderas para construir los nodos
                 this.cargando=false;
                 this.listo=true;
+                this.alineacionEmp=this.alineacion;
+                this.nivelEmp=this.nivelx;
                 
                 //se recupera las subareas
                 var subs=this.areax.subareas;
@@ -131,11 +145,31 @@
                 if(this.areax.subareas){
                     this.ultimoNodo=this.areax.subareas.length;
                 }
+                //valida que tenga empleados
+                if(this.areax.empleados){
+                    this.empleadosCount=this.areax.empleados.length;
+                    //se determina en titular del área
+                    this.titular=this.areax.empleados.find(this.esTitular);
+                    //se elimina de la lista de empleados
+                    if(this.titular){
+                        var i=this.areax.empleados.indexOf(this.titular);
+                        this.areax.empleados.splice(i,1);
+                        this.empleadosCount -= 1;
+                    }
+                    //determina la alineación de los empleados segun el numero y nivel
+                    if(this.empleadosCount>6){
+                        this.alineacionEmp='flex-vertical';
+                        this.nivelEmp=this.nivelx+1;
+                    }
+                }
+                
                 //su es el elemento raiz se actializa el contenedor principal
                 if(this.raiz){
                     var main=document.querySelector('main-container');
                     main.area=this.areax.adscripcion;
                     main.super=this.areax.super;
+                    
+                    //se determina como se va a visualizar el personal adscrito en el area
                 }
                 
                 if(this.ultimoNodo>0){
@@ -151,6 +185,27 @@
             },
             getUltimo:function(){
                 return this.ultimoNodo;
+            },
+            _tieneSubareas:function(a){
+                if(a.subareas.length>0)
+                    return true;
+                else
+                    return false;
+            },
+            _esRaiz:function(r){
+                return r.raiz;
+            },
+            _tieneEmpleados:function(a){
+                if(a.empleados.length>0){
+                    
+                    //si no tiene subareas se muestra dentro de las ramas
+                    if(this._tieneSubareas(this.areax))
+                        return false;
+                    else
+                        return true;
+                }
+                else
+                    return false;
             }
         });
     </script>
