@@ -11,36 +11,48 @@
                 margin-top: 20px;
             }
             
-            .area .card-content{
-                height: 130px;
+            paper-card.area, paper-card.empleado{
+                border: 1px solid #999;
+            }
+            paper-card.falsa{
+                margin-top: 20.9px;
             }
             
-            .area .card-content a{
+            .area .card-content{
+                height: 90px;
+            }
+            
+            .falsa .card-content{
+                border: 2px dashed #999;
+            }
+            
+            .area .card-content a, .falsa .card-content a{
                 font-size: 11px;
                 font-weight: bold;
             }
             .empleado .card-content{
-                height: 80px;
+                height: 40px;
             }
             paper-card.staff.left::before{
                 content: '';
+                z-index: -1;
                 position: absolute;
-                right: -59%;
-                bottom: -52px;
+                right: -107.5px;
+                bottom: -55px;
                 border-right: 2px solid #999;
-                width: 50%; height: 130%;
+                width: 50%; height: 170%;
             }
             paper-card.staff.left::after{
                 content: '';
-                position: absolute;right: -59%; top:50%;
+                position: absolute;right: -60%; top:50%;
                 border-top: 2px solid #999;
-                width: 59%; height: 0;
+                width: 60%; height: 0;
             }
             paper-card.staff.right::after{
                 content: '';
-                position: absolute;left: -60%; top:50%;
+                position: absolute;left: -59%; top:50%;
                 border-top: 2px solid #999;
-                width: 60%; height: 0;
+                width: 59%; height: 0;
             }
             paper-card.nivel3.unico{
                 margin-top: 42px;
@@ -52,7 +64,7 @@
             paper-card.nivel2.unico::before,paper-card.nivel3.unico::before, paper-card.nivel4.unico::before{
                 content: '';
                 z-index: -1;
-                position: absolute; top:-52px; left: 126px;
+                position: absolute; top:-52px; left: 50%;
                 border-left: 2px solid #999;
                 width: 171px; height: 51px;
             }
@@ -77,13 +89,13 @@
                 border-top: 2px solid #999;
                 border-bottom: 2px solid #999;
                 border-left: 2px solid #999;
-                width: 59.5%; height: 60%;
+                width: 59.9%; height: 60%;
             }
             
             paper-card.nivel3.primero::after, paper-card.nivel4.primero::after{
                 content: '';
                 z-index: -1;
-                position: absolute; top:-52px; left:43%;
+                position: absolute; top:-51px; left:43%;
                 border-left: 2px solid #999;
                 width: 0; height: 42px;
             }
@@ -118,7 +130,7 @@
             }
             
             paper-card.nivel1.tiene-hijos{
-                margin-bottom: 49px;
+                margin-bottom: 47px;
             }
             paper-card.nivel1.tiene-hijos::before{
                 content: '';
@@ -164,7 +176,7 @@
             
 */
         </style>
-        <paper-card elevation="4" class$=[[clase]]>
+        <paper-card class$=[[clase]]>
             <div class="card-content">
                 <template is="dom-if" if="{{_area(area)}}">
                     <a href="/{{area._id}}">
@@ -210,6 +222,7 @@
                     notify:true
                 },
 				empleado:Object,
+                obj:Object,
                 clases:{
                     type:String,
                     value:'sin-hijos'
@@ -249,14 +262,19 @@
 				var cnivel="nivel"+this.nivel;
 				var cindex="inter";
                 var cnodo="empleado";
-                
-                console.log(this.ultimoNodo)
+
                 //determina las clases para el staff
                 if(this.staff){
                     if(this.index % 2==0)
                         this.clase="staff left";
                     else
                         this.clase="staff right";
+                    if(this.obj.rfc){
+                        this.empleado=this.obj;
+                        this.clase+=" empleado";
+                    }
+                    else
+                        this.area=this.obj;
                     if(this.area)
                         this.clase=this.clase+" area";
                 }else{
@@ -274,7 +292,12 @@
                     //determina si el nodo tiene hijos, 
                     if(this.area){
                         var subs=this.area.subareas;
-                        cnodo="area";
+                        cnodo="";
+                        if(this.area.falsa){
+                            cnodo="falsa";
+                        }else{
+                            cnodo="area";
+                        }
                         if(subs){
                             //si es raiz tiene que tener hijos
                             if(this.area.raiz){

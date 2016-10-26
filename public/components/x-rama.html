@@ -18,7 +18,7 @@
               }
             
             .flex-vertical {
-                padding-left: 40px;
+                padding-left: 24px;
                 @apply(--layout-vertical);
               }
             .flex-wrap{
@@ -34,7 +34,9 @@
             
         </style>
         
-        <iron-ajax auto url="/adscripcion/[[id]]" handle-as="json" last-response="{{areax}}" on-response="validahijos"></iron-ajax>
+        <template is="dom-if" if="{{tieneID}}">
+            <iron-ajax auto url="/adscripcion/[[id]]" handle-as="json" last-response="{{areax}}" on-response="validahijos"></iron-ajax>
+        </template>
         <template is="dom-if" if="[[cargando]]">
                 <paper-spinner-lite active=[[cargando]] class="flex-center-justified"></paper-spinner-lite>
         </template>
@@ -44,11 +46,11 @@
                     <x-nodo area={{areax}} index=[[index]] nivel=[[nivel]] ultimo-nodo={{ultimo}} empleado=[[titular]]></x-nodo>
                 </div>
             </div>
-            <template is="dom-if" if="{{_esRaiz(areax)}}">
+            <template is="dom-if" if="{{_tieneStaff(raiz,staff)}}">
                 <div class="flex-center-justified contenedor-staff">
                     <div class="flex-wrap">
-                        <template is="dom-repeat" as="staff" items="{{areax.subareas}}" filter="esStaff">
-                            <x-nodo area={{staff}} index=[[index]] staff=true></x-nodo> 
+                        <template is="dom-repeat" as="stf" items="{{staff}}">
+                            <x-nodo obj={{stf}} index=[[index]] staff=true></x-nodo> 
                         </template>
                     </div>
                 </div>
@@ -57,7 +59,12 @@
                 <template is="dom-if" if="{{_tieneSubareas(areax)}}">
                     <div class$="{{alineacion}}">
                         <template is="dom-repeat" items="{{areax.subareas}}" filter="noEsStaff">
-                            <x-rama id="{{item._id}}" alineacion='flex-vertical' nivel=[[nivelx]] index=[[index]] ultimo={{getUltimo()}}></x-rama>
+                            <template is="dom-if" if="{{_esVerdadera(item)}}">
+                                <x-rama id="{{item._id}}" alineacion='flex-vertical' nivel=[[nivelx]] index=[[index]] ultimo={{getUltimo()}}></x-rama>
+                            </template>
+                            <template is="dom-if" if="{{_esFalsa(item)}}">
+                                <x-rama areax="{{item}}" alineacion='flex-vertical' nivel=[[nivelx]] index=[[index]] ultimo={{getUltimo()}}></x-rama>
+                            </template>
                         </template>
                     </div>
                 </template>
@@ -75,6 +82,7 @@
         Polymer({
             is: 'x-rama',
             properties:{
+                areax:Object,
                 id:Number,
                 raiz:{
                     type:Boolean,
@@ -113,6 +121,16 @@
                 if(this.nivel<this.nivelMax){
                     this.mostrarHijos=true;
                 }
+                this.alineacionEmp=this.alineacion;
+                this.nivelEmp=this.nivelx;
+                
+                if(this.id){
+                    this.tieneID=true;
+                }else{
+                    this.tieneID=false;
+                    this.validahijos(false);
+                    
+                }
             }
             ,
             esStaff:function(area){
@@ -136,16 +154,8 @@
                 //se cambian las banderas para construir los nodos
                 this.cargando=false;
                 this.listo=true;
-                this.alineacionEmp=this.alineacion;
-                this.nivelEmp=this.nivelx;
                 
-                //se recupera las subareas
-                var subs=this.areax.subareas;
-                //valida que tenga subareas
-                if(this.areax.subareas){
-                    this.ultimoNodo=this.areax.subareas.length;
-                }
-                //valida que tenga empleados
+                ///valida que tenga empleados
                 if(this.areax.empleados){
                     this.empleadosCount=this.areax.empleados.length;
                     //se determina en titular del área
@@ -159,19 +169,62 @@
                     //determina la alineación de los empleados segun el numero y nivel
                     if(this.empleadosCount>6){
                         this.alineacionEmp='flex-vertical';
-                        this.nivelEmp=this.nivelx+1;
+                        this.nivelEmp=3;
                     }
                 }
                 
-                //su es el elemento raiz se actializa el contenedor principal
+                //se recupera las subareas
+                var subs=this.areax.subareas;
+                this.ultimoNodo=subs.length
+                
+                var staff=[];
+                //valida que tenga subareas
+                if(subs){
+                    //determina si tiene areas staff
+                    subs.forEach(function(item,index){
+                        if(item.staff){
+                            staff.push(item);
+                        }
+                    });
+                    if(staff){
+                        //elimina los elementos del staff del array de subareas
+                        staff.forEach(function(item,index){
+                            subs.slice(subs.indexOf(item),1);
+                        });
+                    }
+                    //determina la longitud de las areas
+                    this.ultimoNodo=subs.length-staff.length; 
+                }
+                
+                
+                //su es el elemento raiz se actualiza el contenedor principal
                 if(this.raiz){
                     var main=document.querySelector('main-container');
                     main.area=this.areax.adscripcion;
                     main.super=this.areax.super;
                     
-                    //se determina como se va a visualizar el personal adscrito en el area
+                    //determina si se muestra los empleados en el area de staff o como un area auxiliar
+                    
+                    //como staff
+                    if(this.areax.raiz || subs.length>0){
+                        if(this.areax.empleados.length<5){
+                            staff=staff.concat(this.areax.empleados);
+                        }else{
+                            var area_falsa={
+                                _id:this.id,
+                                adscripcion:"Personal de apoyo adscrito al área",
+                                subareas:new Array,
+                                empleados:this.areax.empleados,
+                                falsa:true,
+                            }
+                            this.areax.subareas.push(area_falsa);
+                            this.ultimoNodo+=1;
+                        }
+                    } 
                 }
                 
+                this.areax.subareas=subs;
+                this.staff=staff;
                 if(this.ultimoNodo>0){
                     if(this.nivel<this.nivelMax){
                         this.claseNivel="tiene-hijos";
@@ -192,8 +245,16 @@
                 else
                     return false;
             },
-            _esRaiz:function(r){
-                return r.raiz;
+            _tieneStaff:function(r,s){
+                if(r && s.length>0)
+                    return true;
+            },
+            
+            _esVerdadera:function(a){
+                return !a.falsa;
+            },
+            _esFalsa:function(a){
+                return !this._esVerdadera(a);
             },
             _tieneEmpleados:function(a){
                 if(a.empleados.length>0){

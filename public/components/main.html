@@ -10,9 +10,13 @@
 <dom-module id="main-container">
     <template>
         <style>
-            .flex-center {
-                @apply(--layout-horizontal);
-                @apply(--layout-center-justified);
+            .contenedor{
+                display: flex;
+            }
+            .center {
+                /*@apply(--layout-horizontal);
+                @apply(--layout-center-justified);*/
+                margin: auto;
               }
             .volver{
                 position: absolute;
@@ -35,8 +39,10 @@
             <paper-fab icon="arrow-back" title="Volver" class="orange"></paper-fab>
         </a>
         </template>
-        <div class="flex-center">
+        <div class="contenedor">
+            <div class="flex">
             <x-rama id=[[raiz]] nivel='1' raiz=true></x-rama> 
+            </div>
         </div>
     </template>
     <script>
