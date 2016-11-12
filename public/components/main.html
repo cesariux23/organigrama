@@ -4,20 +4,13 @@
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html"/>
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html"/>
 <link rel="import" href="../bower_components/paper-tooltip/paper-tooltip.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="x-rama.html"/>
 
 
 <dom-module id="main-container">
     <template>
         <style>
-            .contenedor{
-                display: flex;
-            }
-            .center {
-                /*@apply(--layout-horizontal);
-                @apply(--layout-center-justified);*/
-                margin: auto;
-              }
             .volver{
                 position: absolute;
                 top: 80px;
@@ -39,11 +32,7 @@
             <paper-fab icon="arrow-back" title="Volver" class="orange"></paper-fab>
         </a>
         </template>
-        <div class="contenedor">
-            <div class="flex">
             <x-rama id=[[raiz]] nivel='1' raiz=true></x-rama> 
-            </div>
-        </div>
     </template>
     <script>
         Polymer({

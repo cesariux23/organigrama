@@ -30,7 +30,6 @@
                 @apply(--layout-justified);
               @apply(--layout-wrap);
             }
-        
             
         </style>
         
@@ -38,7 +37,9 @@
             <iron-ajax auto url="/adscripcion/[[id]]" handle-as="json" last-response="{{areax}}" on-response="validahijos"></iron-ajax>
         </template>
         <template is="dom-if" if="[[cargando]]">
-                <paper-spinner-lite active=[[cargando]] class="flex-center-justified"></paper-spinner-lite>
+            <div class="flex-center-justified" style="width:200px; height:50px;">
+                <paper-spinner-lite active=[[cargando]]></paper-spinner-lite>
+            </div>
         </template>
         <template is="dom-if" if="[[listo]]">
             <div class="flex-center-justified">
@@ -47,7 +48,7 @@
                 </div>
             </div>
             <template is="dom-if" if="{{_tieneStaff(raiz,staff)}}">
-                <div class="flex-center-justified contenedor-staff">
+                <div class="flex-center-justified">
                     <div class="flex-wrap">
                         <template is="dom-repeat" as="stf" items="{{staff}}">
                             <x-nodo obj={{stf}} index=[[index]] staff=true></x-nodo> 
@@ -69,10 +70,12 @@
                     </div>
                 </template>
                 <template is="dom-if" if="{{_tieneEmpleados(areax)}}">
-                    <div class$="{{alineacionEmp}}">
-                        <template is="dom-repeat" items="{{areax.empleados}}">
-                                <x-nodo index=[[index]] empleado=[[item]] nivel=[[nivelEmp]] ultimo-nodo={{empleadosCount}}></x-nodo>
-                        </template>
+                    <div class="flex-center-justified">
+                        <div class$="{{alineacionEmp}}">
+                            <template is="dom-repeat" items="{{areax.empleados}}">
+                                    <x-nodo index=[[index]] empleado=[[item]] nivel=[[nivelEmp]] ultimo-nodo={{empleadosCount}}></x-nodo>
+                            </template>
+                        </div>
                     </div>
                 </template>
             </template>
@@ -167,7 +170,7 @@
                         this.empleadosCount -= 1;
                     }
                     //determina la alineación de los empleados segun el numero y nivel
-                    if(this.empleadosCount>6){
+                    if(this.empleadosCount>8){
                         this.alineacionEmp='flex-vertical';
                         this.nivelEmp=3;
                     }
@@ -197,7 +200,7 @@
                 }
                 
                 
-                //su es el elemento raiz se actualiza el contenedor principal
+                //si es el elemento raiz se actualiza el contenedor principal
                 if(this.raiz){
                     var main=document.querySelector('main-container');
                     main.area=this.areax.adscripcion;

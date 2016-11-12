@@ -28,7 +28,6 @@ app.get('/adscripcion/:id', function (req, res) {
                 as: 'subareas'
             }
         },
-        {$sort:{staff:-1}},
         {
           $lookup: {
               from: 'empleados',
@@ -37,7 +36,15 @@ app.get('/adscripcion/:id', function (req, res) {
               as: 'empleados'
           }
         },
-        {$match:{'_id':req.params.id}}
+        {$sort:{
+                staff:-1
+            }
+        },
+        {
+            $match:{
+                '_id':req.params.id
+            }
+        }
     ,function(err, doc){
         //area primaria
         var area=doc[0];
