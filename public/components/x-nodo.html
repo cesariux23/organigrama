@@ -5,7 +5,7 @@
             paper-card{
                 font-size: 9px;
                 text-align: center;
-                width: 180px;  
+                width: 180px;
                 margin: 10px;
                 margin-left: 20px;
                 margin-top: 20px;
@@ -36,7 +36,7 @@
                 background:none;
                 border:none;
             }*/
-            
+
             .area .card-content, .empleado .card-content{
                 min-height: 40px;
             }
@@ -51,14 +51,14 @@
             .area.fotografia .card-content{
                 height: 185px;
             }
-            
+
             .falsa .card-content{
                 border: 2px dashed #999;
             }
             .area .card-content a, .falsa .card-content a{
                 font-weight: bold;
             }
-            
+
             paper-card.staff.left::before{
                 content: '';
                 z-index: -1;
@@ -89,14 +89,14 @@
                 border-top: 2px solid #999;
                 width: 59%; height: 0;
             }
-            
+
             paper-card.nivel3.unico{
                 margin-top: 42px;
             }
             paper-card.empleado.nivel3.unico,paper-card.empleado.nivel4.unico{
                 margin-left: -20px;
             }
-            
+
             paper-card.nivel2.unico::before,paper-card.nivel3.unico::before, paper-card.nivel4.unico::before{
                 content: '';
                 z-index: -1;
@@ -104,8 +104,8 @@
                 border-left: 2px solid #999;
                 width: 171px; height: 51px;
             }
-            
-            
+
+
             paper-card.nivel3.inter.fotografia::before, paper-card.nivel4.inter.fotografia::before,paper-card.nivel3.fotografia.ultimo::before, paper-card.nivel4.fotografia.ultimo::before{
                 content: '';
                 z-index: -1;
@@ -127,7 +127,7 @@
             paper-card.nivel3.primero, paper-card.nivel4.primero{
                 margin-top: 40px;
             }
-            
+
             paper-card.nivel3.primero::before, paper-card.nivel4.primero::before{
                 content: '';
                 z-index: -1;
@@ -137,7 +137,7 @@
                 border-left: 2px solid #999;
                 width: 107px; height: 60%;
             }
-            
+
             paper-card.nivel3.primero::after, paper-card.nivel4.primero::after{
                 content: '';
                 z-index: -1;
@@ -145,8 +145,8 @@
                 border-left: 2px solid #999;
                 width: 0; height: 42px;
             }
-            
-            
+
+
             paper-card.nivel2.primero::before{
                 content: '';
                 position: absolute; top:-30px; left: 50%;
@@ -166,7 +166,7 @@
                 border-left: 2px solid #999;
                 width: 0; height: 30px;
             }
-            
+
             paper-card.nivel2.ultimo::before{
                 content: '';
                 position: absolute; top:-30px; right: 49%;
@@ -174,15 +174,15 @@
                 border-right: 2px solid #999;
                 width: 100%; height: 28px;
             }
-            
+
             paper-card.nivel1.tiene-hijos{
                 margin-bottom: 47px;
             }
-            
+
             paper-card.nivel1.tiene-hijos::before{
                 content: '';
-                position: absolute; 
-                bottom:-40px; 
+                position: absolute;
+                bottom:-40px;
                 border-right: 2px solid #999;
                 width: 0;
                 height: 40px;
@@ -194,13 +194,13 @@
             paper-card.nivel1.unico > div.card-content{
                 height: 150px;
             }
-            
+
             .puesto{
                 font-style: italic;
                 color:#555;
             }
-            
-            
+
+
             p.area{
                 width: 100%;
                 padding:4px;
@@ -238,7 +238,16 @@
             }
 
             div.actividades{
-                max-width:800px;
+                max-width:600px;
+            }
+
+            div.lateral{
+              text-align: center;
+            }
+            div.info{
+              border-left: 2px solid #eee;
+              padding: 10px;
+              margin-left: 20px;
             }
 /*
             .nivel1 p.area{
@@ -252,7 +261,7 @@
             .nivel3 p.area{
                 background: #80CBC4;
             }
-            
+
 */
         </style>
         <paper-card class$=[[clase]]>
@@ -280,14 +289,35 @@
             </div>
         </paper-card>
 
-        <paper-dialog modal>
-            <template is="dom-if" if="{{_tieneFoto(empleado.fotografia)}}">
-                <img class="circular detalle" src="{{empleado.fotografia}}">
-            </template>
-            <h2>[[empleado.nombre]] [[empleado.primer_apellido]] [[empleado.segundo_apellido]]</h2>
-            <span class="puesto">[[empleado.puesto]]</span>
-            <div class="actividades">
-                <p>[[empleado.actividades]]</p>
+        <paper-dialog>
+          <h3>Detalles</h3>
+            <div class="layout horizontal">
+              <div class="lateral">
+                <x-fotografia foto="{{empleado.fotografia}}"></x-fotografia>
+                <h2>[[empleado.nombre]] [[empleado.primer_apellido]] [[empleado.segundo_apellido]]</h2>
+                <span class="puesto">[[empleado.puesto]]</span>
+              </div>
+              <div class="info">
+                <div class="actividades">
+                  <p>
+                    <strong>Tipo de contrato</strong>
+                    <br>
+                    [[empleado.tipo_contrato]]
+
+                  </p>
+                  <p>
+                    <strong>Escolaridad</strong>
+                    <br>
+                    [[empleado.escolaridad]]
+                  </p>
+                    <p>
+                      <strong>Actividades</strong>
+                      <br>
+                      [[empleado.actividades]]
+                    </p>
+
+                </div>
+              </div>
             </div>
             <div class="buttons">
                 <paper-button dialog-dismiss>Cerrar</paper-button>
@@ -324,7 +354,7 @@
                 staff:{
                     type:Boolean,
                     value:false
-                    
+
                 }
             },
             _area:function(area){
@@ -384,7 +414,7 @@
                         if(this.index==0)
                             cindex="primero";
                     }
-                    //determina si el nodo tiene hijos, 
+                    //determina si el nodo tiene hijos,
                     if(this.area){
                         var subs=this.area.subareas;
                         if(this.area.falsa){

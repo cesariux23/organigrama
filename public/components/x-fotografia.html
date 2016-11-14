@@ -1,0 +1,33 @@
+<dom-module id="x-fotografia">
+  <style>
+    img{
+      border-radius: 50%;
+      -webkit-border-radius:  50%;
+      -moz-border-radius:  50%;
+    }
+    img.small{
+      width: 250px;
+    }
+  </style>
+  <template>
+    <img id="foto" src="{{src}}" class="small">
+  </template>
+  <script>
+    Polymer({
+      is:'x-fotografia',
+      properties:{
+        src:{
+          type:String,
+          value:"/fotos/perfil.png"
+        },
+        foto:String
+      },
+      ready:function(){
+        if(this.foto!=null && this.foto.length>0)
+          this.src="/"+this.foto;
+        console.log(this.src)
+      }
+      
+    });
+  </script>
+</dom-module>
