@@ -20,6 +20,10 @@ app.get('/:id', function (req, res) {
 app.get('/adscripcion/:id', function (req, res) {
 
     adscripciones.aggregate(
+        {$sort:{
+                _id:1
+            }
+        },
         {
             $lookup: {
                 from: 'adscripciones',
@@ -35,10 +39,6 @@ app.get('/adscripcion/:id', function (req, res) {
               foreignField: 'adscripcion',
               as: 'empleados'
           }
-        },
-        {$sort:{
-                staff:-1
-            }
         },
         {
             $match:{
